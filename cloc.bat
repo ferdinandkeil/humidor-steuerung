@@ -1,0 +1,1 @@
+C:\Users\ferdinand\Downloads\cloc-1.56.exe --exclude-list-file=cloc-exclude ./

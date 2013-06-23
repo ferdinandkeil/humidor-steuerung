@@ -35,6 +35,21 @@ const char Menu_cgBell[] PROGMEM = {
 	0b00000  // 7
 };
 
+// LCD Big Font
+// Source: http://forum.arduino.cc/index.php/topic,44427.0.html
+const char Menu_cgBig0[] PROGMEM = {31,31,31,0,0,0,0,0};		// Small block top
+const char Menu_cgBig1[] PROGMEM = {0,0,0,0,0,31,31,31};		// Small block bottom
+const char Menu_cgBig2[] PROGMEM = {31,31,31,0,0,0,31,31};		// Small block top and bottom
+const char Menu_cgBig3[] PROGMEM = {28,30,31,31,31,31,30,28};	// Full block, rounded right
+const char Menu_cgBig4[] PROGMEM = {7,15,31,31,31,31,15,7};		// Full block, rounded left
+const char Menu_cgBig5[] PROGMEM = {0,0,0,14,14,14,12,8};		// Dot, for decimal
+
+const char Menu_tabBigFont[] PROGMEM = {
+	255,   0, 255, 255,   0, 255,		// 0
+	  0, 255, 254,   1, 255,   1,		// 1
+	  0,   2,   3,   4,   1,   1,		// 2
+};
+
 // Menu Text
 
 const char MENU_STR_OCLOCK[] PROGMEM =         "Uhr";
@@ -282,14 +297,15 @@ int8_t Menu_Root(int8_t input) {
 	lcd_home();	
 	switch (Menu_currState) {
 		case MENU_STATE_STATUS:
-			lcd_number(Clock_getHour(), 2, '0');
+/*			lcd_number(Clock_getHour(), 2, '0');
 			lcd_data( 0x3A ); // :
 			lcd_number(Clock_getMinute(), 2, '0');
 			lcd_data( 0x3A ); // :
 			lcd_number(Clock_getSecond(), 2, '0');
 			lcd_data(' ');
 			lcd_string_P(MENU_STR_OCLOCK);
-			lcd_setcursor(0, 2);
+			lcd_setcursor(0, 2); */
+			;
 			static uint8_t blink;
 			if (Alarm_wasTriggered() && (blink++ & 4)) {
 				lcd_data(LCD_GC_CHAR0);
@@ -305,7 +321,43 @@ int8_t Menu_Root(int8_t input) {
 						break;
 					case SENSOR_TYPE_SHT1X:
 					case SENSOR_TYPE_HYT131:
-						lcd_number(Sensor_getTemp() / 100, 2, '0');
+						// 0
+						lcd_data(255);
+						lcd_data(LCD_GC_CHAR1);
+						lcd_data(255);
+						// Leer
+						lcd_data(254);
+						// 1
+						lcd_data(LCD_GC_CHAR1);
+						lcd_data(255);
+						lcd_data(254);
+						// Leer
+						lcd_data(254);
+						// 2
+						lcd_data(LCD_GC_CHAR1);
+						lcd_data(LCD_GC_CHAR3);
+						lcd_data(LCD_GC_CHAR4);
+						
+						// Nächste Zeile
+						lcd_setcursor(0, 2);
+						
+						// 0
+						lcd_data(255);
+						lcd_data(LCD_GC_CHAR2);
+						lcd_data(255);
+						// Leer
+						lcd_data(254);
+						// 1
+						lcd_data(LCD_GC_CHAR2);
+						lcd_data(255);
+						lcd_data(LCD_GC_CHAR2);
+						// Komma
+						lcd_data(LCD_GC_CHAR6);
+						// 2
+						lcd_data(LCD_GC_CHAR5);
+						lcd_data(LCD_GC_CHAR2);
+						lcd_data(LCD_GC_CHAR2);
+/*						lcd_number(Sensor_getTemp() / 100, 2, '0');
 						lcd_data(',');
 						lcd_number(Sensor_getTemp() % 100, 2, '0');
 						lcd_data( 0xDF ); // °
@@ -316,8 +368,8 @@ int8_t Menu_Root(int8_t input) {
 						lcd_number(Sensor_getHumi() / 100, 2, '0');
 						lcd_data(',');
 						lcd_number(Sensor_getHumi() % 100, 2, '0');
-						lcd_data('%');
-						break;	
+						lcd_data('%'); */
+						break;
 				}
 			}
 			break;
@@ -469,6 +521,12 @@ Task_t* Menu(void) {
 	Menu_updateRequest = 0;
 	lcd_init();
 	lcd_generatechar_P(LCD_GC_CHAR0, Menu_cgBell, 8);
+	lcd_generatechar_P(LCD_GC_CHAR1, Menu_cgBig0, 8);
+	lcd_generatechar_P(LCD_GC_CHAR2, Menu_cgBig1, 8);
+	lcd_generatechar_P(LCD_GC_CHAR3, Menu_cgBig2, 8);
+	lcd_generatechar_P(LCD_GC_CHAR4, Menu_cgBig3, 8);
+	lcd_generatechar_P(LCD_GC_CHAR5, Menu_cgBig4, 8);
+	lcd_generatechar_P(LCD_GC_CHAR6, Menu_cgBig5, 8);
 	static Task_t menu;
 	menu.canRun = Menu_canRun;
 	menu.run = Menu_run;

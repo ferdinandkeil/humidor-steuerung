@@ -23,6 +23,8 @@ int8_t Alarm_State_Buzzer(int8_t input);
 
 int8_t Alarm_State_Back(int8_t input);
 
+Task_t* Led(void);
+
 Task_t* Alarm(void);
 
 #endif

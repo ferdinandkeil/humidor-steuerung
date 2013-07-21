@@ -9,7 +9,7 @@
 #define MENU_ENC_TYPE_NOBLE    0
 #define MENU_ENC_TYPE_NONAME   1
 
-#define MENU_ENC_TYPE          MENU_ENC_TYPE_NONAME
+#define MENU_ENC_TYPE          MENU_ENC_TYPE_NOBLE
 
 // Menu Konstanten
 
@@ -26,7 +26,6 @@
 #define MENU_STATE_FAN1       10
 #define MENU_STATE_FAN2       20
 #define MENU_STATE_FAN3	      30
-#define MENU_STATE_FAN4	      40
 #define MENU_STATE_RESERVED   50
 #define MENU_STATE_CAL        60
 #define MENU_STATE_CAL_TEMP   61
@@ -59,7 +58,6 @@ extern const char MENU_STR_OCLOCK[] PROGMEM;
 extern const char MENU_STR_FAN1[] PROGMEM;
 extern const char MENU_STR_FAN2[] PROGMEM;
 extern const char MENU_STR_FAN3[] PROGMEM;
-extern const char MENU_STR_FAN4[] PROGMEM;
 extern const char MENU_STR_CAL[] PROGMEM;
 extern const char MENU_STR_TIME[] PROGMEM;
 extern const char MENU_STR_BOOT[] PROGMEM;

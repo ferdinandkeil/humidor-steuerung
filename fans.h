@@ -41,13 +41,6 @@ int8_t Fan_State_3_Rep(int8_t input);
 int8_t Fan_State_3_Dur(int8_t input);
 int8_t Fan_State_3_Back(int8_t input);
 
-int8_t Fan_State_4_Ctrl(int8_t input);
-int8_t Fan_State_4_Humi(int8_t input);
-int8_t Fan_State_4_On(int8_t input);
-int8_t Fan_State_4_Rep(int8_t input);
-int8_t Fan_State_4_Dur(int8_t input);
-int8_t Fan_State_4_Back(int8_t input);
-
 // Eigentliche Funktionen
 
 int8_t Fan_State_Ctrl(uint8_t fan, int8_t input);

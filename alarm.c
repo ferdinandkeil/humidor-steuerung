@@ -12,8 +12,10 @@
 #define ALARM_HUMI_MIN       1
 #define ALARM_HUMI_MAX      99
 
-#define ALARM_PIN_BUZ      PD7
+#define ALARM_PIN_BUZ      PD0
 #define ALARM_PORT_BUZ   PORTD
+#define ALARM_PIN_LED	   PC3
+#define ALARM_PORT_LED	 PORTC
 
 Alarm_t Alarm_settings = {0, 0};
 
@@ -22,17 +24,6 @@ Alarm_t Alarm_settingsE EEMEM = {(1<<ALARM_STATUS_LED), 68};
 uint8_t Alarm_edit;
 
 uint8_t Alarm_triggered;
-
-// iDevice Breathing LED
-// https://github.com/adafruit/iCufflinks/
-uint8_t Fader_breathing[] PROGMEM = {
-	1, 1, 2, 3, 5, 8, 11, 15, 20, 25, 30, 36, 43, 49, 56, 64, 72, 80, 88, 97,
-	105, 114, 123, 132, 141, 150, 158, 167, 175, 183, 191, 199, 206, 212, 219,
-	225, 230, 235, 240, 244, 247, 250, 252, 253, 254, 255, 254, 253, 252, 250,
-	247, 244, 240, 235, 230, 225, 219, 212, 206, 199, 191, 183, 175, 167, 158,
-	150, 141, 132, 123, 114, 105, 97, 88, 80, 72, 64, 56, 49, 43, 36, 30, 25,
-	20, 15, 11, 8, 5, 3, 2, 1, 0
-};
 
 int8_t Alarm_State_Enable(int8_t input) {
 	// Wert bearbeiten?
@@ -189,16 +180,10 @@ static void Alarm_run(void *_self, uint32_t now) {
 	static uint8_t led;
 	if ((Alarm_settings.status & (1<<ALARM_STATUS_LED))
 		&& Alarm_triggered) {
-		TCCR0A |= (1<<COM0A1);
-		uint8_t val;
-		if (!( val = pgm_read_byte(&Fader_breathing[led]) )) {
-			led = 0;
-			val = pgm_read_byte(&Fader_breathing[led]);
-		}
-		led++;
-		OCR0A = val;
+		if (led++ & 8)
+			ALARM_PORT_LED ^= (1<<ALARM_PIN_LED);
 	} else {
-		TCCR0A &= ~(1<<COM0A1);
+		ALARM_PORT_LED &= ~(1<<ALARM_PIN_LED);
 	}
 	// Piepser
 	static uint8_t buz;

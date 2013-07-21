@@ -35,10 +35,6 @@ int main(void) {
 	TIMSK1 = (1<<OCIE1A);				// OCR Interrupt
 	TCCR1B = (1<<WGM12) | (1<<CS10);	// CLK/1, CTC Mode
 	
-	TCCR0A = (1<<WGM01) | (1<<WGM00);  // non-inverted PWM output, Fast PWM (Mode 3)
-	TCCR0B = (1<<CS02);    // Fast PWM (Mode 3), CLK/256
-	OCR0A = 0;
-	
 	sei();
 	
 	Task_t *debounce = Debounce();

@@ -5,14 +5,14 @@
 # (GNU make, BSD make, SysV make)
 
 
-MCU = atmega168
+MCU = atmega328p
 F_CPU = 12000000
 FORMAT = ihex
 TARGET = main
 SRC = $(TARGET).c
 SRC += task.c debounce.c keypress.c rotenc.c lcd-routines.c menu.c 
-SRC += fans.c clock.c twimaster.c sht11.c sensor.c alarm.c
-SRC += calibration.c
+SRC += fans.c clock.c sht11.c sensor.c alarm.c calibration.c
+SRC += 
 ASRC = 
 OPT = s
 

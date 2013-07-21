@@ -21,9 +21,9 @@
 #define SHT11_RES_HIGH      0  //12_14_Bit
 #define SHT11_RESOLUTION    SHT11_RES_LOW
 
-#define SHT11_PORT	        C
-#define SHT11_SCL	        (1<<PC5)
-#define SHT11_SDA	        (1<<PC4)
+#define SHT11_PORT	        D
+#define SHT11_SCL	        (1<<PD7)
+#define SHT11_SDA	        (1<<PD6)
 #define SHT11_LOWRES	    SHT11_RESOLUTION
 
 #define SHT11_CRC			1

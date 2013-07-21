@@ -20,7 +20,7 @@
 #define FAN_DUR_MIN     1
 #define FAN_DUR_MAX    99
 
-#define FAN_NR_OF_FANS  4
+#define FAN_NR_OF_FANS  3
 
 #define FAN_READOUT     0
 #define FAN_EDIT        1
@@ -28,12 +28,10 @@
 Fan_t Fan_fans[FAN_NR_OF_FANS] = {
 	{0, 0, 0, 0, 0, 0},
 	{0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0},
 	{0, 0, 0, 0, 0, 0}
 };
 
 const Fan_t Fan_fansE[FAN_NR_OF_FANS] EEMEM = {
-	{FAN_CTRL_OFF, 72, 12, 00, 5, 12},
 	{FAN_CTRL_OFF, 72, 12, 00, 5, 12},
 	{FAN_CTRL_OFF, 72, 12, 00, 5, 12},
 	{FAN_CTRL_OFF, 72, 12, 00, 5, 12}
@@ -70,10 +68,6 @@ int8_t Fan_State_3_Ctrl(int8_t input) {
 	return Fan_State_Ctrl(2, input);
 }
 
-int8_t Fan_State_4_Ctrl(int8_t input) {
-	return Fan_State_Ctrl(3, input);
-}
-
 // Menü: Feuchtigkeit
 
 int8_t Fan_State_1_Humi(int8_t input) {
@@ -86,10 +80,6 @@ int8_t Fan_State_2_Humi(int8_t input) {
 
 int8_t Fan_State_3_Humi(int8_t input) {
 	return Fan_State_Humi(2, input);
-}
-
-int8_t Fan_State_4_Humi(int8_t input) {
-	return Fan_State_Humi(3, input);
 }
 
 // Menü: Anschaltzeitpunkt
@@ -106,10 +96,6 @@ int8_t Fan_State_3_On(int8_t input) {
 	return Fan_State_On(2, input);
 }
 
-int8_t Fan_State_4_On(int8_t input) {
-	return Fan_State_On(3, input);
-}
-
 // Menü: Intervall
 
 int8_t Fan_State_1_Rep(int8_t input) {
@@ -122,10 +108,6 @@ int8_t Fan_State_2_Rep(int8_t input) {
 
 int8_t Fan_State_3_Rep(int8_t input) {
 	return Fan_State_Rep(2, input);
-}
-
-int8_t Fan_State_4_Rep(int8_t input) {
-	return Fan_State_Rep(3, input);
 }
 
 // Menü: Anschaltdauer
@@ -142,10 +124,6 @@ int8_t Fan_State_3_Dur(int8_t input) {
 	return Fan_State_Dur(2, input);
 }
 
-int8_t Fan_State_4_Dur(int8_t input) {
-	return Fan_State_Dur(3, input);
-}
-
 // Menü: Zurück
 
 int8_t Fan_State_1_Back(int8_t input) {
@@ -158,10 +136,6 @@ int8_t Fan_State_2_Back(int8_t input) {
 
 int8_t Fan_State_3_Back(int8_t input) {
 	return Fan_State_Back(2, input);
-}
-
-int8_t Fan_State_4_Back(int8_t input) {
-	return Fan_State_Back(3, input);
 }
 
 // Eigentliche Funktionen
@@ -365,16 +339,13 @@ static void Fan_checkFan(uint8_t fan) {
 	switch (fan) {
 		default:
 		case 0:
-			pin = PC3;
+			pin = PC0;
 			break;
 		case 1:
 			pin = PC2;
 			break;
 		case 2:
-			pin = PC1;
-			break;
-		case 3:
-			pin = PC0;
+			pin = PC4;
 			break;
 	}
 	if (Fan_fans[fan].ctrl == FAN_CTRL_HUMI) {
@@ -430,44 +401,7 @@ static void Fan_run(void *_self, uint32_t now) {
 	Fan_checkFan(0);
 	Fan_checkFan(1);
 	Fan_checkFan(2);
-	Fan_checkFan(3);
-	Task_setRunTime(_self, 500);
-	/*if (Fan_fans[0].ctrl == FAN_CTRL_OFF) {
-		// Lüfter ausschalten
-		Fan_1_turnOff();
-		Task_incRunTime(_self, 400);
-	} else if (Fan_fans[0].ctrl == FAN_CTRL_TIME) {
-		if ((Fan_fans[0].timeH == Clock_getHour())
-			&& (Fan_fans[0].timeM == Clock_getMinute())) {
-			// Lüfter anschalten
-			Fan_1_turnOn();
-			Task_setRunTime(_self, now + (60000*Fan_fans[0].dur));
-		} else {
-			// Lüfter ausschalten
-			Fan_1_turnOff();
-			Task_incRunTime(_self, 400);
-		}
-	} else if (Fan_fans[0].ctrl == FAN_CTRL_REP) {
-		if ((Clock_getHour() % Fan_fans[0].rep == 0)
-			&& (Clock_getMinute() == 0)) {
-			// Lüfter anschalten
-			Fan_1_turnOn();
-			Task_setRunTime(_self, now + (60000*Fan_fans[0].dur));
-		} else {
-			// Lüfter ausschalten
-			Fan_1_turnOff();
-			Task_incRunTime(_self, 400);
-		}
-	} else if (Fan_fans[0].ctrl == FAN_CTRL_HUMI) {
-		if (Sensor_getHumi() < (int16_t) (Fan_fans[0].humi * 100)) {
-			// Lüfter anschalten
-			Fan_1_turnOn();
-		} else {
-			// Lüfter ausschalten
-			Fan_1_turnOff();
-		}
-		Task_incRunTime(_self, 400);
-	}*/
+	Task_incRunTime(_self, 500);
 }
 
 Task_t* Fans(void) {

@@ -431,43 +431,7 @@ static void Fan_run(void *_self, uint32_t now) {
 	Fan_checkFan(1);
 	Fan_checkFan(2);
 	Fan_checkFan(3);
-	Task_setRunTime(_self, 500);
-	/*if (Fan_fans[0].ctrl == FAN_CTRL_OFF) {
-		// Lüfter ausschalten
-		Fan_1_turnOff();
-		Task_incRunTime(_self, 400);
-	} else if (Fan_fans[0].ctrl == FAN_CTRL_TIME) {
-		if ((Fan_fans[0].timeH == Clock_getHour())
-			&& (Fan_fans[0].timeM == Clock_getMinute())) {
-			// Lüfter anschalten
-			Fan_1_turnOn();
-			Task_setRunTime(_self, now + (60000*Fan_fans[0].dur));
-		} else {
-			// Lüfter ausschalten
-			Fan_1_turnOff();
-			Task_incRunTime(_self, 400);
-		}
-	} else if (Fan_fans[0].ctrl == FAN_CTRL_REP) {
-		if ((Clock_getHour() % Fan_fans[0].rep == 0)
-			&& (Clock_getMinute() == 0)) {
-			// Lüfter anschalten
-			Fan_1_turnOn();
-			Task_setRunTime(_self, now + (60000*Fan_fans[0].dur));
-		} else {
-			// Lüfter ausschalten
-			Fan_1_turnOff();
-			Task_incRunTime(_self, 400);
-		}
-	} else if (Fan_fans[0].ctrl == FAN_CTRL_HUMI) {
-		if (Sensor_getHumi() < (int16_t) (Fan_fans[0].humi * 100)) {
-			// Lüfter anschalten
-			Fan_1_turnOn();
-		} else {
-			// Lüfter ausschalten
-			Fan_1_turnOff();
-		}
-		Task_incRunTime(_self, 400);
-	}*/
+	Task_incRunTime(_self, 500);
 }
 
 Task_t* Fans(void) {

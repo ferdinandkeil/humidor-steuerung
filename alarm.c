@@ -25,7 +25,7 @@ uint8_t Alarm_triggered;
 
 // iDevice Breathing LED
 // https://github.com/adafruit/iCufflinks/
-uint8_t Fader_breathing[] PROGMEM = {
+const uint8_t Fader_breathing[] PROGMEM = {
 	1, 1, 2, 3, 5, 8, 11, 15, 20, 25, 30, 36, 43, 49, 56, 64, 72, 80, 88, 97,
 	105, 114, 123, 132, 141, 150, 158, 167, 175, 183, 191, 199, 206, 212, 219,
 	225, 230, 235, 240, 244, 247, 250, 252, 253, 254, 255, 254, 253, 252, 250,

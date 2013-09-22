@@ -63,7 +63,6 @@ static void Sensor_run(void* _self, uint32_t now) {
 			}
 			if (i2c_stop())
 				goto hyt131_error;
-			Sensor_hyt131Success();   // Retry-Zähler zurücksetzen
 			Sensor_hyt131State = SENSOR_HYT131_MEAS;
 			Task_incRunTime(_self, 100);
 		/* Messung ist erfolgt: Daten auslesen */

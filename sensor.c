@@ -5,16 +5,23 @@
 #include "task.h"
 #include "calibration.h"
 
-#define SENSOR_HYT131_ADDR 0x28
+/* Konfiguration HYT131 Sensor */
+#define SENSOR_HYT131_ADDR    0x28
+#define SENSOR_HYT131_RETRIES   10
 
-#define SENSOR_HYT131_READY   0
-#define SENSOR_HYT131_MEAS    1
+/* Zustände für HYT131 Sensor */
+#define SENSOR_HYT131_READY      0
+#define SENSOR_HYT131_MEAS       1
+#define SENSOR_HYT131_TIMEOUT    2
 
+/* Setzt den Retry-Zähler zurück */
+#define Sensor_hyt131Success() {Sensor_hyt131Retries = SENSOR_HYT131_RETRIES;}
 
 uint8_t Sensor_type;
 int16_t Sensor_humidity;
 int16_t Sensor_temperature;
 uint8_t Sensor_hyt131State;
+uint8_t Sensor_hyt131Retries;
 
 static uint8_t Sensor_canRun(void* _self, uint32_t now) {
 	return Sensor_isConnected() && TimedTask_canRun(_self, now);
@@ -41,7 +48,11 @@ static void Sensor_run(void* _self, uint32_t now) {
 		Task_incRunTime(_self, 800);
 	}
 	if (Sensor_type == SENSOR_TYPE_HYT131) {
-		// http://jeelabs.org/2012/06/30/new-hyt131-sensor/
+		/* 
+		 * Quelle für die Kommunikation mit dem Sensor:
+		 * http://jeelabs.org/2012/06/30/new-hyt131-sensor/
+		 */
+		/* Sensor bereit: Messung anfordern */
 		if (Sensor_hyt131State == SENSOR_HYT131_READY) {
 			if (i2c_start(SENSOR_HYT131_ADDR+I2C_WRITE)) {
 				i2c_stop();
@@ -50,26 +61,57 @@ static void Sensor_run(void* _self, uint32_t now) {
 				Sensor_temperature = SENSOR_ERROR_VAL;
 				return;
 			}
-			i2c_stop();
+			if (i2c_stop())
+				goto hyt131_error;
+			Sensor_hyt131Success();   // Retry-Zähler zurücksetzen
 			Sensor_hyt131State = SENSOR_HYT131_MEAS;
 			Task_incRunTime(_self, 100);
+		/* Messung ist erfolgt: Daten auslesen */
 		} else if (Sensor_hyt131State == SENSOR_HYT131_MEAS) {
-			uint16_t h, t;
-			i2c_start_wait(SENSOR_HYT131_ADDR+I2C_READ);
-			h = (i2c_readAck() & 0x3F) << 8;
-			h |= i2c_readAck();
-			t = i2c_readAck() << 6;
-			t |= i2c_readNak() >> 2;
+			uint16_t h, t, temp;
+			if (i2c_start_wait(SENSOR_HYT131_ADDR+I2C_READ) > I2C_ERROR)
+				goto hyt131_error;
+			if ((temp = i2c_readAck()) > I2C_ERROR)
+				goto hyt131_error;
+			h = (temp & 0x3F) << 8;
+			if ((temp = i2c_readAck()) > I2C_ERROR)
+				goto hyt131_error;
+			h |= temp;
+			if ((temp = i2c_readAck()) > I2C_ERROR)
+				goto hyt131_error;
+			t = temp << 6;
+			if ((temp = i2c_readNak()) > I2C_ERROR)
+				goto hyt131_error;
+			t |= temp >> 2;
 			Sensor_humidity = (h * 10000L >> 14) + (Calibration_getHumi() * 10);
 			Sensor_temperature = (t * 16500L >> 14) - 4000 + (Calibration_getTemp() * 10);
+			Sensor_hyt131Success();   // Retry-Zähler zurücksetzen
 			Sensor_hyt131State = SENSOR_HYT131_READY;
 			Task_incRunTime(_self, 700);
 		}
+		return;
+
+		/* Fehlerbehandlung für HYT131 Sensor */
+		hyt131_error: {
+			if (Sensor_hyt131Retries-- == 0) {
+				Sensor_type = SENSOR_TYPE_ERROR;
+				Sensor_humidity = SENSOR_ERROR_VAL;
+				Sensor_temperature = SENSOR_ERROR_VAL;
+				return;
+			}
+			Sensor_hyt131State = SENSOR_HYT131_READY;
+			Task_incRunTime(_self, 1000);
+			return;
+		}
+		
 	}
+	/* bei Fehler */
+	Task_incRunTime(_self, 1000);
 }
 
 Task_t* Sensor(void) {
 	Sensor_type = SENSOR_TYPE_SEARCHING;
+	Sensor_hyt131Retries = SENSOR_HYT131_RETRIES;
 	PORTC |= (1<<PC4) | (1<<PC5);
 	i2c_init();
 	if (!i2c_start(SENSOR_HYT131_ADDR+I2C_WRITE)) {

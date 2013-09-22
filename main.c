@@ -35,7 +35,7 @@ static void Watchdog_run(void *_self, uint32_t now) {
 }
 
 Task_t* Watchdog(void) {
-	wdt_enable(WDTO_500MS);		// Watchdog Timer aktivieren
+	wdt_enable(WDTO_1S);		// Watchdog Timer aktivieren
 	static Task_t watchdog;
 	watchdog.canRun = TimedTask_canRun;
 	watchdog.run = Watchdog_run;

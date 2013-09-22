@@ -68,6 +68,7 @@ const char MENU_STR_BUZZER[] PROGMEM =         "Piepser:    ";
 const char MENU_STR_ALARM_STATUS[] PROGMEM =   " Alarm!";
 const char MENU_STR_NO_SENSOR[] PROGMEM =      "Kein Sensor!";
 const char MENU_STR_SEARCHING[] PROGMEM =      "Suche Sensor...";
+const char MENU_STR_SENSOR_ERROR[] PROGMEM =   "Sensor Fehler!";
 
 const Menu_State_t Menu_state[] PROGMEM = {
 	{MENU_STATE_STATUS,  Menu_Root},
@@ -302,6 +303,9 @@ int8_t Menu_Root(int8_t input) {
 					default:
 					case SENSOR_TYPE_NONE:
 						lcd_string_P(MENU_STR_NO_SENSOR);
+						break;
+					case SENSOR_TYPE_ERROR:
+						lcd_string_P(MENU_STR_SENSOR_ERROR);
 						break;
 					case SENSOR_TYPE_SHT1X:
 					case SENSOR_TYPE_HYT131:

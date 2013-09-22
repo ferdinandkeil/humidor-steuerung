@@ -8,6 +8,7 @@
 #define SENSOR_TYPE_NONE       1
 #define SENSOR_TYPE_SHT1X      2
 #define SENSOR_TYPE_HYT131     3
+#define SENSOR_TYPE_ERROR      4
 
 #define SENSOR_ERROR_VAL       INT16_MAX
 

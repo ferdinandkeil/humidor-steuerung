@@ -42,7 +42,9 @@
 #define MENU_STATE_ALARM_LED  83
 #define MENU_STATE_ALARM_BUZ  84
 #define MENU_STATE_ALARM_BACK 89
-#define MENU_STATE_BACK       90
+#define MENU_STATE_VER        90
+#define MENU_STATE_VER_SHOW   91
+#define MENU_STATE_BACK      100
 
 #define MENU_INPUT_NULL        0
 #define MENU_INPUT_UP          1
@@ -107,11 +109,11 @@ typedef struct PROGMEM {
 
 extern uint8_t Menu_updateRequest;
 
+extern const char GITVERSION[];
+
 #define Menu_update(input) Menu_updateRequest = input
 
 // Funktionen
-
-int8_t Menu_Root(int8_t input);
 
 Task_t* Menu(void);
 
